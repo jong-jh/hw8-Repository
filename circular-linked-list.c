@@ -122,7 +122,15 @@ int initialize(listNode** h) {
 
 /* 메모리 해제 */
 int freeList(listNode* h){
-
+	listNode* p = h->rlink;
+	listNode* prev = NULL;
+	
+	while(p != h) {
+		prev = p;
+		p = p->rlink;
+		free(prev);
+	}
+	free(h);
 	return 0;
 }
 
@@ -170,6 +178,28 @@ void printList(listNode* h) {
  * list에 key에 대한 노드하나를 추가
  */
 int insertLast(listNode* h, int key) {
+	listNode* p=h->rlink;
+	listNode* temp=(listNode*)malloc(sizeof(listNode));	//노드 생성
+	temp->key=key;
+
+	if(p==h){//list가 비어있다면
+		temp->rlink=h;
+		temp->llink=h;
+		h->rlink=temp;
+		h->llink=temp;
+		return 1;
+	}
+	while(1){
+		if(p->rlink==h){//list의 마지막이라면
+			temp->llink=p;
+			temp->rlink=h;
+
+			p->rlink=temp;
+			h->llink=temp;
+			break;
+		}
+		else p=p->rlink;
+	}
 
 	return 1;
 }
@@ -179,6 +209,23 @@ int insertLast(listNode* h, int key) {
  * list의 마지막 노드 삭제
  */
 int deleteLast(listNode* h) {
+	listNode *p=h->rlink;
+	
+	if(p==h){//list 가 비어있다면 다음을 출력
+		printf("list is empty now. \n");
+		return 0;
+	}
+	
+	while(1){
+		if(p->rlink==h){
+			p->rlink->llink=p->llink;
+			p->llink->rlink=p->rlink;//마지막이기 때문에 h를 가리킴. (p->llink->rlink=h)
+			free(p);
+			break;
+		}
+		else p=p->rlink;
+	}
+
 
 
 	return 1;
