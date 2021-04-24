@@ -226,8 +226,6 @@ int deleteLast(listNode* h) {
 		else p=p->rlink;
 	}
 
-
-
 	return 1;
 }
 
@@ -236,7 +234,21 @@ int deleteLast(listNode* h) {
  * list 처음에 key에 대한 노드하나를 추가
  */
 int insertFirst(listNode* h, int key) {
+	listNode* temp=(listNode*)malloc(sizeof(listNode));	//노드 생성
+	temp->key=key;
 
+	if(h->rlink==h){//list가 비어있다면
+		temp->rlink=h;
+		temp->llink=h;
+		h->rlink=temp;
+		h->llink=temp;
+		return 1;
+	}
+
+	temp->llink=h;
+	temp->rlink=h->rlink;
+	h->rlink=temp;
+	temp->rlink->llink=temp;	//temp가 가리키는 노드의 llink는 temp를 가리킨다.
 
 	return 1;
 }
@@ -245,7 +257,16 @@ int insertFirst(listNode* h, int key) {
  * list의 첫번째 노드 삭제
  */
 int deleteFirst(listNode* h) {
+	listNode *p=h->rlink;
+	
+	if(p==h){//list 가 비어있다면 다음을 출력
+		printf("list is empty now. \n");
+		return 0;
+	}
 
+	p->llink->rlink=p->rlink;
+	p->rlink->llink=p->llink;
+	free(p);
 
 	return 1;
 
@@ -256,9 +277,21 @@ int deleteFirst(listNode* h) {
  * 리스트의 링크를 역순으로 재 배치
  */
 int invertList(listNode* h) {
+	listNode *lead=h->rlink;
+	listNode *trail=NULL;
 
+	while(lead!=h){
+		trail=lead->llink;		//trail에 lead의llink값을 저장
+		lead->llink=lead->rlink;//llink값을 rlink값으로 바꿈
+		lead->rlink=trail;		///rlink 값을 llink값으로 바꿈 -> 순서가 바뀜
 
-	return 0;
+		lead=lead->llink;	//다음노드로 이동
+	}
+
+	h->llink=h->rlink;
+	h->rlink=trail->llink;
+
+	return 1;
 }
 
 
