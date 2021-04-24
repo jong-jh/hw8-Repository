@@ -300,6 +300,43 @@ int invertList(listNode* h) {
  *  리스트를 검색하여, 입력받은 key보다 큰값이 나오는 노드 바로 앞에 삽입 
  **/
 int insertNode(listNode* h, int key) {
+	listNode *p=h->rlink;
+	listNode* temp=(listNode*)malloc(sizeof(listNode));	//노드 생성
+	temp->key=key;
+
+	if(h->rlink==h){//list가 비어있다면
+		temp->rlink=h;
+		temp->llink=h;
+		h->rlink=temp;
+		h->llink=temp;
+		return 1;
+	}
+	while(1){
+		if(key<=h->rlink->key){		//temp가 맨 앞 쪽에 와야할 때
+			temp->rlink=h->rlink;	//temp rlink 를 헤더노드가 가리키던 노드와 연결
+			temp->llink=h;			//llink를 h에 연결 (첫 번 째 이므로)
+			h->rlink->llink=temp;	//밀린 노드의 llink를 temp에 연결
+			h->rlink=temp;			//헤더 노드 교체
+			break;
+		}
+
+		if(p->rlink==h){	//temp의 key값이 가장 마지막에 올 때 (가장 클 때)
+			temp->rlink=h;
+			temp->llink=p;
+			p->rlink=temp;
+			h->llink=temp;
+			break;
+		}
+		else if(key<=p->rlink->key){//temp가 list의 노드 사이에 들어올 때
+			temp->llink=p;	//temp를 list에 연결
+			temp->rlink=p->rlink;
+			
+			p->rlink->llink=temp;	//기존의 양 옆 노드들을 temp와 연결
+			p->rlink=temp;
+			break;
+		}
+		else if(key>p->rlink->key)	p=p->rlink;	//temp 의key가 다음 값 보다 더 크면 이동
+	}
 
 	return 0;
 }
@@ -309,6 +346,24 @@ int insertNode(listNode* h, int key) {
  * list에서 key에 대한 노드 삭제
  */
 int deleteNode(listNode* h, int key) {
+	listNode *p=h->rlink;
+	
+	if(p==h){//list 가 비어있다면 다음을 출력
+		printf("list is empty now. \n");
+		return 0;
+	}
+	
+	while(1){
+		if(p->key==key){//값을 찾을 경우
+			p->rlink->llink=p->llink;	//해당 노드를 삭제
+			p->llink->rlink=p->rlink;
+			free(p);
+			break;
+		}
+		else{ p=p->rlink;	//다음 노드로 이동
+			if(p==h) {printf("Key is not in list!\n"); break;}//값이 없다면 다음을 출력
+			}
+	}
 
 	return 0;
 }
