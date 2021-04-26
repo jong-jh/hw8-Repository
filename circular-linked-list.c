@@ -122,15 +122,15 @@ int initialize(listNode** h) {
 
 /* 메모리 해제 */
 int freeList(listNode* h){
-	listNode* p = h->rlink;
-	listNode* prev = NULL;
+	listNode* p = h->rlink;	//헤더노드를 접근할 포인터노드
+	listNode* prev = NULL;	//메모리 해제를 위한 p가 지나간 노드를 가리키는 포인터
 	
 	while(p != h) {
-		prev = p;
-		p = p->rlink;
-		free(prev);
+		prev = p;	//prev 는 p가 지나간 자리에 위치한다.
+		p = p->rlink;	//p가 list의 끝까지 이동하고
+		free(prev);		//메모리 해제를 해준다.
 	}
-	free(h);
+	free(h);	//헤더노드의 메모리를 해제한다.
 	return 0;
 }
 
@@ -183,19 +183,19 @@ int insertLast(listNode* h, int key) {
 	temp->key=key;
 
 	if(p==h){//list가 비어있다면
-		temp->rlink=h;
+		temp->rlink=h;	//temp는 첫 번째이자 마지막 노드이므로 rlink,llink를 헤더노드에 연결
 		temp->llink=h;
-		h->rlink=temp;
+		h->rlink=temp;	//헤더노드 또한 temp를 가리켜준다.
 		h->llink=temp;
 		return 1;
 	}
 	while(1){
 		if(p->rlink==h){//list의 마지막이라면
-			temp->llink=p;
-			temp->rlink=h;
+			temp->llink=p;	//temp가 마지막이므로 llink는 temp의 이전 노드를
+			temp->rlink=h;	//temp의 rlink는 헤더노드를 가리켜준다.
 
-			p->rlink=temp;
-			h->llink=temp;
+			p->rlink=temp;	//p의 rlink는 새로운 노드인 temp에 연결하고
+			h->llink=temp;	//헤더노드의 llink는 마지막 노드인 temp를 가리킨다.
 			break;
 		}
 		else p=p->rlink;
@@ -216,11 +216,11 @@ int deleteLast(listNode* h) {
 		return 0;
 	}
 	
-	while(1){
+	while(1){	//p의 위치를 마지막 노드에 위치시킨다.
 		if(p->rlink==h){
-			p->rlink->llink=p->llink;
+			p->rlink->llink=p->llink;	//p의 다음노드(헤더노드)의 llink는 p의 이전노드를 가리키고
 			p->llink->rlink=p->rlink;//마지막이기 때문에 h를 가리킴. (p->llink->rlink=h)
-			free(p);
+			free(p);	//메모리 해제
 			break;
 		}
 		else p=p->rlink;
@@ -237,17 +237,9 @@ int insertFirst(listNode* h, int key) {
 	listNode* temp=(listNode*)malloc(sizeof(listNode));	//노드 생성
 	temp->key=key;
 
-	if(h->rlink==h){//list가 비어있다면
-		temp->rlink=h;
-		temp->llink=h;
-		h->rlink=temp;
-		h->llink=temp;
-		return 1;
-	}
-
-	temp->llink=h;
-	temp->rlink=h->rlink;
-	h->rlink=temp;
+	temp->llink=h;	//temp는 첫 번째이므로 llink는 h를 가리킨다.
+	temp->rlink=h->rlink;	//temp 의 rlink는 기존에 h가 가리키던 값을 가리킨다.
+	h->rlink=temp;	//h의 rlink는 새롭게 추가된 temp와 연결한다.
 	temp->rlink->llink=temp;	//temp가 가리키는 노드의 llink는 temp를 가리킨다.
 
 	return 1;
@@ -264,8 +256,8 @@ int deleteFirst(listNode* h) {
 		return 0;
 	}
 
-	p->llink->rlink=p->rlink;
-	p->rlink->llink=p->llink;
+	p->llink->rlink=p->rlink;	//첫 번째 노드의 llink의 rlink 즉 h의 rlink는 p의 다음 노드를 가리킨다.
+	p->rlink->llink=p->llink;	//첫 번째의 다음노드의 llink는 첫 번째가 되므로 p의 이전노드 즉 헤더노드를 가리킨다.
 	free(p);
 
 	return 1;
@@ -288,8 +280,8 @@ int invertList(listNode* h) {
 		lead=lead->llink;	//다음노드로 이동
 	}
 
-	h->llink=h->rlink;
-	h->rlink=trail->llink;
+	h->llink=h->rlink;	//헤더노드와 역순으로 재배치된 노드를 새롭게 연결
+	h->rlink=trail->llink;	//역순으로 연결된 첫 번째 노드를 rlink에, 마지막 노드를 llink로 설정한다.
 
 	return 1;
 }
